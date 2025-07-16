@@ -1,0 +1,14 @@
+.fw-800 {
+  font-weight: 800;
+}
+
+.country-card {
+  cursor: pointer;
+  scale: 1;
+  transition-property: scale;
+  transition-timing-function: linear;
+  transition-duration: 0.25s;
+}
+.country-card:hover {
+  scale: 1.05;
+}

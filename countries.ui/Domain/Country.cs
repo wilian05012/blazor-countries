@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace countries.ui.Domain;
 
@@ -20,5 +21,7 @@ public class Country {
         public string Png { get; set; } = string.Empty;
         public string Alt { get; set; } = string.Empty;
     }
+
+    [JsonPropertyName("flags")]
     public CountryFlags Flag { get; set; } = new();
 }

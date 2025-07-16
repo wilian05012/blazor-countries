@@ -13,4 +13,12 @@ public class RestCountriesApiClient {
     private const string ENDPOINT_ALL = "all?fields=cca3,name,population,flags,region,subregion,capital,languages,currencies,borders";
     public IAsyncEnumerable<Domain.Country?> GetAllCountriesAsync(CancellationToken cancellationToken = default) =>
         _httpClient.GetFromJsonAsAsyncEnumerable<Domain.Country>(ENDPOINT_ALL, cancellationToken);
+
+    private const string ENDPOINT_NAME_SEARCH = "name/";
+    public IAsyncEnumerable<Domain.Country?> SearchByNameAsync(string countryName, CancellationToken cancellationToken = default) =>
+        _httpClient.GetFromJsonAsAsyncEnumerable<Domain.Country?>($"{ENDPOINT_NAME_SEARCH}{countryName}", cancellationToken);
+
+    private const string ENDPOINT_REGION_FILTER = "region/";
+    public IAsyncEnumerable<Domain.Country?> FilterByRegionAsync(string regionName, CancellationToken cancellationToken = default) =>
+        _httpClient.GetFromJsonAsAsyncEnumerable<Domain.Country?>($"{ENDPOINT_REGION_FILTER}{regionName}", cancellationToken);
 }

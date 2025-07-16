@@ -1,7 +1,50 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Countries</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudStack Justify="Justify.SpaceBetween" Row="true" Class="mb-5 py-5">
+    <MudTextField @bind-Value="_searchArg" Adornment="@Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Search"
+        Clearable="true" Label="Search for a country..." FullWidth="false" Variant="@Variant.Filled"
+        Style="width: clamp(300px, 65%, 60ch);" Immediate="true" DebounceInterval="2000"
+        OnDebounceIntervalElapsed="@(async () => { await SearchByNameAsync(); })" />
 
-Welcome to your new app.
+    <MudSelect T="string" Variant="@Variant.Filled" Clearable="true" FullWidth="false" Label="Filter by region"
+        Style="width: 10px;" Immediate="false" Value="@_filterRegion"
+        ValueChanged="@(async (selectedRegion) => { _filterRegion = selectedRegion; await FilterByRegionAsync(); })">
+        @foreach (var region in Domain.World.Regions)
+        {
+            <MudSelectItem Value="@region">@region</MudSelectItem>
+        }
+    </MudSelect>
+</MudStack>
+
+<MudGrid Spacing="6" Justify="@Justify.Center">
+    @foreach (var country in _countries)
+    {
+        <MudItem xs="12" sm="6" md="4" lg="3">
+            <MudCard Elevation="2" Class="country-card">
+                <MudCardMedia Image="@country.Flag.Svg" Height="200"
+                    Style="@($"border-bottom: {Colors.Gray.Lighten1} solid thin;")" />
+                <MudCardContent>
+                    <MudText Typo="@Typo.h5">
+                        @country.Name.Common
+                    </MudText>
+                    <MudText>
+                        <div>
+                            <span class="fw-800">Population:</span>
+                            <span>@country.Population.ToString("N0")</span>
+                        </div>
+                        <div>
+                            <span class="fw-800">Region:</span>
+                            <span>@country.Region</span>
+                        </div>
+                        <div>
+                            <span class="fw-800">Capital:</span>
+                            <span>@String.Join(" | ", country.Capital)</span>
+                        </div>
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
