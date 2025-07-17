@@ -1,65 +1,86 @@
 ﻿@page "/countries/{code:alpha}"
 
+<MudToolBar Class="px-0">
+    <MudButton StartIcon="@Icons.Material.Outlined.ArrowBack" OnClick="@(() => { NavigateBackHome(); })">Back</MudButton>
+</MudToolBar>
 
-<MudButton StartIcon="@Icons.Material.Outlined.ArrowBack" OnClick="@(() => { NavigateBackHome(); })">Back</MudButton>
 
-<MudText Typo="Typo.h3">@(_country?.Name?.Common ?? "Unknown country")</MudText>
+<MudGrid Spacing="10">
+    <MudItem xs="12" lg="6" >
+        <MudImage Src="@_country!.Flag.Svg" ObjectFit="@ObjectFit.Cover" ObjectPosition="@ObjectPosition.Center" Fluid="true" Style="@($"border: solid 1px {Colors.Gray.Lighten1}")"/>
+    </MudItem>
+
+    <MudItem xs="12" lg="6">
+        <MudGrid Spacing="10">
+            <MudItem xs="12">
+                <MudText Typo="Typo.h3">@(_country?.Name?.Common ?? "Unknown country")</MudText>
+            </MudItem>
+
+            <MudItem xs="12" lg="6">
+                <MudText>
+                    <span class="fw-800">Native Name:</span>
+                    <span>@string.Join(" | ", _country?.Name?.GetNativeNames() ?? Array.Empty<string>())</span>
+                </MudText>
+
+                <MudText>
+                    <span class="fw-800">Population:</span>
+                    <span>@_country?.Population.ToString("N0")</span>
+                </MudText>
+
+                <MudText>
+                    <span class="fw-800">Region:</span>
+                    <span>@_country?.Region</span>
+                </MudText>
+
+                <MudText>
+                    <span class="fw-800">Sub Region:</span>
+                    <span>@_country?.SubRegion</span>
+                </MudText>
+
+                <MudText>
+                    <span class="fw-800">Capital:</span>
+                    <span>@string.Join(" | ", _country?.Capital ?? Array.Empty<string>())</span>
+                </MudText>
+            </MudItem>
+
+            <MudItem xs="12" lg="6">
+                <MudText>
+                    <span class="fw-800">Top Level Domain:</span>
+                    <span>@(string.Join(" | ", _country?.TopLevelDomain ?? Array.Empty<string>()))</span>
+                </MudText>
+
+                <MudText>
+                    <span class="fw-800">Currencies:</span>
+                    <span>@string.Join(", ", _country?.Currencies.Select(c => $"{c.Value.Name} ({c.Value.Symbol})") ?? Array.Empty<string>())</span>
+                </MudText>
+
+                <MudText>
+                    <span class="fw-800">Languages:</span>
+                    <span>@string.Join(", ", _country?.Languages.Select(l => l.Value) ?? Array.Empty<string>())</span>
+                </MudText>
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudStack Row="true" AlignItems="@AlignItems.Start">
+                    <MudText Class="fw-800">Borders:</MudText>
+                    @if (_neighboringCountries.Count > 0)
+                    {
+                        <MudStack Row="true" Wrap="@Wrap.Wrap">
+                            @{
+                                foreach(var neighborCountry in _neighboringCountries) {
+                                    <MudButton Variant="@Variant.Outlined"  Size="@Size.Small"  OnClick="@(() => { NavigateToCountry(neighborCountry.Code); })" >@neighborCountry.Name.Common</MudButton>
+                                }
+                            }
+                        </MudStack>
+                    }
+                    else
+                    {
+                        <MudText>No borders</MudText>
+                    }   
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+</MudGrid>
 
 
-<MudText>
-    <span class="fw-800">Native Name:</span>
-    <span>@string.Join(" | ", _country?.Name?.GetNativeNames() ?? Array.Empty<string>())</span>
-</MudText>
-
-<MudText>
-    <span class="fw-800">Population:</span>
-    <span>@_country?.Population.ToString("N0")</span>
-</MudText>
-
-<MudText>
-    <span class="fw-800">Region:</span>
-    <span>@_country?.Region</span>
-</MudText>
-
-<MudText>
-    <span class="fw-800">Sub Region:</span>
-    <span>@_country?.SubRegion</span>
-</MudText>
-
-<MudText>
-    <span class="fw-800">Capital:</span>
-    <span>@string.Join(" | ", _country?.Capital ?? Array.Empty<string>())</span>
-</MudText>
-
-<MudText>
-    <span class="fw-800">Top Level Domain:</span>
-    <span>@(string.Join(" | ", _country?.TopLevelDomain ?? Array.Empty<string>()))</span>
-</MudText>
-
-<MudText>
-    <span class="fw-800">Currencies:</span>
-    <span>@string.Join(", ", _country?.Currencies.Select(c => $"{c.Value.Name} ({c.Value.Symbol})") ?? Array.Empty<string>())</span>
-</MudText>
-
-<MudText>
-    <span class="fw-800">Languages:</span>
-    <span>@string.Join(", ", _country?.Languages.Select(l => l.Value) ?? Array.Empty<string>())</span>
-</MudText>
-
-<MudPaper>
-    <MudText Typo="Typo.h6">Borders:</MudText>
-    @if (_neighboringCountries.Count > 0)
-    {
-        <MudButtonGroup>
-            @{
-                foreach(var neighborCountry in _neighboringCountries) {
-                    <MudButton OnClick="@(() => { NavigateToCountry(neighborCountry.Code); })" >@neighborCountry.Name.Common</MudButton>
-                }
-            }
-        </MudButtonGroup>
-    }
-    else
-    {
-        <MudText>No borders</MudText>
-    }   
-</MudPaper>
