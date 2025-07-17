@@ -2,21 +2,21 @@
 
 <PageTitle>Countries</PageTitle>
 
-<MudStack Justify="Justify.SpaceBetween" Row="true" Class="mb-5 py-5">
+<MudToolBar WrapContent="true" Class="px-0 gap-2 mb-5">
     <MudTextField @bind-Value="_searchArg" Adornment="@Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Search"
-        Clearable="true" Label="Search for a country..." FullWidth="false" Variant="@Variant.Filled"
-        Style="width: clamp(300px, 65%, 60ch);" Immediate="true" DebounceInterval="2000"
+        Clearable="true" Label="Search for a country..." Variant="@Variant.Filled" Immediate="true"
+        DebounceInterval="2000" FullWidth="false" Style="max-width: 400px;"
         OnDebounceIntervalElapsed="@(async () => { await SearchByNameAsync(); })" />
 
-    <MudSelect T="string" Variant="@Variant.Filled" Clearable="true" FullWidth="false" Label="Filter by region"
-        Style="width: 10px;" Immediate="false" Value="@_filterRegion"
+    <MudSelect T="string" Variant="@Variant.Filled" Clearable="true" Label="Filter by region" Immediate="false"
+        Value="@_filterRegion" FullWidth="false" FitContent="false" Style="max-width: 400px; justify-self: end;"
         ValueChanged="@(async (selectedRegion) => { _filterRegion = selectedRegion; await FilterByRegionAsync(); })">
         @foreach (var region in Domain.World.Regions)
         {
             <MudSelectItem Value="@region">@region</MudSelectItem>
         }
     </MudSelect>
-</MudStack>
+</MudToolBar>
 
 <MudGrid Spacing="6" Justify="@Justify.Center">
     @foreach (var country in _countries)
