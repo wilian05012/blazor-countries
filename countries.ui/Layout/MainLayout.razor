@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider></MudThemeProvider>
+<MudThemeProvider IsDarkMode="@_isDarkMode"></MudThemeProvider>
 <MudPopoverProvider></MudPopoverProvider>
 <MudDialogProvider></MudDialogProvider>
 <MudSnackbarProvider></MudSnackbarProvider>
@@ -9,7 +9,8 @@
     <MudAppBar>
         <MudText Typo="Typo.h6">Where in the world</MudText>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Outlined.DarkMode" Color="@Color.Inherit" Edge="Edge.Start" />
+        <MudIconButton Icon="@(_isDarkMode? Icons.Material.Outlined.LightMode : Icons.Material.Outlined.DarkMode)"
+            Color="@Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDarkMode" />
     </MudAppBar>
     <MudMainContent>
         <MudContainer Class="py-5">
@@ -17,3 +18,14 @@
         </MudContainer>
     </MudMainContent>
 </MudLayout>
+
+
+@code {
+    private bool _isDarkMode = false;
+
+    private void ToggleDarkMode()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+
+}
