@@ -18,20 +18,29 @@ public partial class CountryDetails {
 
     private Domain.Country? _country;
     private readonly IList<Domain.Country> _neighboringCountries = new List<Domain.Country>();
+    private bool _isLoading = false;
+    private string _errMsg = string.Empty;
 
     protected override async Task OnParametersSetAsync() {
         await base.OnParametersSetAsync();
 
-        _country = await _apiClient!.GetCountryByCodeAsync(Code);
-        _neighboringCountries.Clear();
-        if (_country?.Borders?.Any() == true) {
-            foreach (var border in _country.Borders) {
-                var neighborCountry = await _apiClient!.GetCountryByCodeAsync(border);
-                if (neighborCountry is not null) {
-                    _neighboringCountries.Add(neighborCountry);
+        _isLoading = true;
+        try {
+            _country = await _apiClient!.GetCountryByCodeAsync(Code);
+            _neighboringCountries.Clear();
+            if (_country?.Borders?.Any() == true) {
+                foreach (var border in _country.Borders) {
+                    var neighborCountry = await _apiClient!.GetCountryByCodeAsync(border);
+                    if (neighborCountry is not null) {
+                        _neighboringCountries.Add(neighborCountry);
+                    }
                 }
-            }
 
+            }
+        } catch(Exception e) {
+            _errMsg = e.Message;
+        } finally { 
+            _isLoading = false;
         }
     }
 
