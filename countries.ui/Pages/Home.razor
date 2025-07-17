@@ -5,11 +5,11 @@
 <MudToolBar WrapContent="true" Class="px-0 gap-2 mb-5">
     <MudTextField @bind-Value="_searchArg" Adornment="@Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Search"
         Clearable="true" Label="Search for a country..." Variant="@Variant.Filled" Immediate="true"
-        DebounceInterval="2000" FullWidth="false" Style="max-width: 400px;"
+        DebounceInterval="2000" FullWidth="false" 
         OnDebounceIntervalElapsed="@(async () => { await SearchByNameAsync(); })" />
 
     <MudSelect T="string" Variant="@Variant.Filled" Clearable="true" Label="Filter by region" Immediate="false"
-        Value="@_filterRegion" FullWidth="false" FitContent="false" Style="max-width: 400px; justify-self: end;"
+        Value="@_filterRegion" FullWidth="false" FitContent="false" 
         ValueChanged="@(async (selectedRegion) => { _filterRegion = selectedRegion; await FilterByRegionAsync(); })">
         @foreach (var region in Domain.World.Regions)
         {
