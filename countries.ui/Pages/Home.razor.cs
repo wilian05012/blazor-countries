@@ -9,6 +9,9 @@ public partial class Home {
     [Inject]
     public Services.RestCountriesApiClient? ApiClient { get; set; }
 
+    [Inject]
+    private NavigationManager? _navMgr { get; set; }
+
     private readonly IList<Domain.Country> _countries = new List<Domain.Country>();
     private string _searchArg = string.Empty;
 
@@ -75,4 +78,8 @@ public partial class Home {
     private bool _filterAndSearchEmpty =>
         string.IsNullOrWhiteSpace(_searchArg) &&
         string.IsNullOrWhiteSpace(_filterRegion);
+
+    private void NavigateToCountry(string code) {
+        _navMgr?.NavigateTo($"countries/{code.ToLowerInvariant()}");
+    }
 }

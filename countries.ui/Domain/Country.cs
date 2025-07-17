@@ -4,6 +4,8 @@ using System.Text.Json.Serialization;
 namespace countries.ui.Domain;
 
 public class Country {
+    [JsonPropertyName("cca3")]
+    public string Code { get; set; } = string.Empty;
     public class CountryName {
         public string Common { get; set; } = string.Empty;
         public string Official { get; set; } = string.Empty;

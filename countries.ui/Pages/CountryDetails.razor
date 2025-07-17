@@ -1,0 +1,6 @@
+﻿@page "/countries/{code:alpha}"
+
+
+<MudButton StartIcon="@Icons.Material.Outlined.ArrowBack" OnClick="@(() => { NavigateBackHome(); })">Back</MudButton>
+
+<MudText Typo="Typo.h3">@(_country?.Name?.Common ?? "Unknown country")</MudText>
