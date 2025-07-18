@@ -22,7 +22,7 @@
     @foreach (var country in _countries)
     {
         <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudCard Elevation="2" Class="country-card" @onclick="@(() => { NavigateToCountry(country.Code); })">
+            <MudCard Elevation="2" Class="country-card" @onclick="@(async () => { await NavigateToCountryAsync(country.Code); })">
                 <MudCardMedia Image="@country.Flag.Svg" Height="200"
                     Style="@($"border-bottom: {Colors.Gray.Lighten1} solid thin;")" />
                 <MudCardContent>

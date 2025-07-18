@@ -20,6 +20,9 @@ internal class Program {
 
             return new RestCountriesApiClient(GetConfigValue(builder.Configuration, Constants.Settings.REST_COUNTRIES_API_BASE_URL), httpClient);
         });
+
+        builder.Services.AddSessionStorageManager();
+
         builder.Services.AddMudServices();
 
         await builder.Build().RunAsync();

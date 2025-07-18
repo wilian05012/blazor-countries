@@ -1,17 +1,24 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
+
+using countries.ui.Services;
 
 using Microsoft.AspNetCore.Components;
 
 namespace countries.ui.Pages;
 
 public partial class Home {
+    private const string STATUS_KEY = "status";
+
     [Inject]
     public Services.RestCountriesApiClient? ApiClient { get; set; }
 
     [Inject]
     private NavigationManager? _navMgr { get; set; }
 
+    [Inject]
+    private SessionStorageManager? _storageManager { get; set; }
     private readonly IList<Domain.Country> _countries = new List<Domain.Country>();
     private string _searchArg = string.Empty;
 
@@ -20,8 +27,10 @@ public partial class Home {
     protected override async Task OnParametersSetAsync() {
         await base.OnParametersSetAsync();
 
-        if (ApiClient is null) throw new ApplicationException($"API client service was not instatiated!");
+        await RetrieveStatusAsync();
 
+        if (!string.IsNullOrWhiteSpace(_searchArg)) await SearchByNameAsync();
+        if (!string.IsNullOrWhiteSpace(_filterRegion)) await FilterByRegionAsync();
         await LoadCountriesAsync();
     }
 
@@ -79,7 +88,35 @@ public partial class Home {
         string.IsNullOrWhiteSpace(_searchArg) &&
         string.IsNullOrWhiteSpace(_filterRegion);
 
-    private void NavigateToCountry(string code) {
+    private async Task NavigateToCountryAsync(string code) {
+        await SaveStatusAsync(code);
+
         _navMgr?.NavigateTo($"countries/{code.ToLowerInvariant()}");
+    }
+
+    public class Status {
+        public string RegionFilter { get; set; } = string.Empty;
+        public string SearchArgument { get; set; } = string.Empty;
+        public string? SelectedCountryCode { get; set; }
+    }
+
+    private Status? _status;
+    private Task SaveStatusAsync(string code) {
+        _status = new Status() {
+            RegionFilter = _filterRegion,
+            SearchArgument = _searchArg,
+            SelectedCountryCode = code
+        };
+
+        return _storageManager!.SaveKeyedItemAsync(STATUS_KEY, _status);
+    }
+
+    private async Task RetrieveStatusAsync() {
+        _status = await _storageManager!.GetKeyedItemAsync<Status>(STATUS_KEY);
+
+        if (_status is not null) {
+            _searchArg = _status.SearchArgument;
+            _filterRegion = _status.RegionFilter;
+        }
     }
 }
