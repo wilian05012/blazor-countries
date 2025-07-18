@@ -15,4 +15,10 @@ public static class Extensions {
             .Where(name => !string.IsNullOrEmpty(name))
             .ToArray();
     }
+
+    public static IServiceCollection AddSessionStorageManager(this IServiceCollection services) {
+        services.AddScoped<Services.SessionStorageManager>();
+
+        return services;
+    }
 }
