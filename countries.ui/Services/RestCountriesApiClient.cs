@@ -5,9 +5,11 @@ namespace countries.ui.Services;
 
 public class RestCountriesApiClient {
     private readonly HttpClient _httpClient;
-    public RestCountriesApiClient(string baseUrl, HttpClient httpClient) {
-        _httpClient = httpClient;
+    public RestCountriesApiClient(string baseUrl, HttpClient httpClient) :this(httpClient) {
         _httpClient.BaseAddress = new Uri(baseUrl);
+    }
+    public RestCountriesApiClient(HttpClient httpClient)  {
+        _httpClient = httpClient;
     }
 
     #region Get All countries

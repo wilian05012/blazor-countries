@@ -30,8 +30,8 @@ public partial class Home {
         await RetrieveStatusAsync();
 
         if (!string.IsNullOrWhiteSpace(_searchArg)) await SearchByNameAsync();
-        if (!string.IsNullOrWhiteSpace(_filterRegion)) await FilterByRegionAsync();
-        await LoadCountriesAsync();
+        else if (!string.IsNullOrWhiteSpace(_filterRegion)) await FilterByRegionAsync();
+        else await LoadCountriesAsync();
     }
 
     private async Task LoadCountriesAsync(CancellationToken cancellationToken = default) {

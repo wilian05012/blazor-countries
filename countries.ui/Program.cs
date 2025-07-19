@@ -18,7 +18,7 @@ internal class Program {
             var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
             var httpClient = httpClientFactory.CreateClient("apiClient");
 
-            return new RestCountriesApiClient(GetConfigValue(builder.Configuration, Constants.Settings.REST_COUNTRIES_API_BASE_URL), httpClient);
+            return new RestCountriesApiClient(httpClient);
         });
 
         builder.Services.AddSessionStorageManager();
