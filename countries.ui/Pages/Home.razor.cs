@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using countries.ui.Services;
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace countries.ui.Pages;
 
@@ -18,7 +19,13 @@ public partial class Home {
     private NavigationManager? _navMgr { get; set; }
 
     [Inject]
+    private IJSRuntime? _jsRuntime { get; set; }
+
+    [Inject]
     private SessionStorageManager? _storageManager { get; set; }
+
+
+    private IJSObjectReference? _collocatedJsModule;
     private readonly IList<Domain.Country> _countries = new List<Domain.Country>();
     private string _searchArg = string.Empty;
 
@@ -27,11 +34,20 @@ public partial class Home {
     protected override async Task OnParametersSetAsync() {
         await base.OnParametersSetAsync();
 
+        _collocatedJsModule ??= await _jsRuntime!.InvokeAsync<IJSObjectReference>("import", "./Pages/Home.razor.js");
+
         await RetrieveStatusAsync();
 
         if (!string.IsNullOrWhiteSpace(_searchArg)) await SearchByNameAsync();
         else if (!string.IsNullOrWhiteSpace(_filterRegion)) await FilterByRegionAsync();
         else await LoadCountriesAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!string.IsNullOrWhiteSpace(_status?.SelectedCountryCode))
+            await BringCountryIntoViewAsync(_status.SelectedCountryCode);
     }
 
     private async Task LoadCountriesAsync(CancellationToken cancellationToken = default) {
@@ -82,6 +98,10 @@ public partial class Home {
             if (string.IsNullOrWhiteSpace(_searchArg) || country.Name.Matches(_searchArg))
                 _countries.Add(country);
         }
+    }
+
+    private async Task BringCountryIntoViewAsync(string countryCode) {
+        await _collocatedJsModule!.InvokeVoidAsync("bringInToView", countryCode.ToLowerInvariant());
     }
 
     private bool _filterAndSearchEmpty =>
