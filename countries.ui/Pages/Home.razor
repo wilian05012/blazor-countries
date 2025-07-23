@@ -5,11 +5,11 @@
 <MudToolBar WrapContent="true" Class="px-0 gap-2 mb-5">
     <MudTextField @bind-Value="_searchArg" Adornment="@Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Search"
         Clearable="true" Label="Search for a country..." Variant="@Variant.Filled" Immediate="true"
-        DebounceInterval="2000" FullWidth="false" 
+        DebounceInterval="2000" FullWidth="false"
         OnDebounceIntervalElapsed="@(async () => { await SearchByNameAsync(); })" />
 
     <MudSelect T="string" Variant="@Variant.Filled" Clearable="true" Label="Filter by region" Immediate="false"
-        Value="@_filterRegion" FullWidth="false" FitContent="false" 
+        Value="@_filterRegion" FullWidth="false" FitContent="false"
         ValueChanged="@(async (selectedRegion) => { _filterRegion = selectedRegion; await FilterByRegionAsync(); })">
         @foreach (var region in Domain.World.Regions)
         {
@@ -18,11 +18,19 @@
     </MudSelect>
 </MudToolBar>
 
+@if (_isLoading)
+{
+    <MudAlert ShowCloseIcon="false" Elevation="4" Icon="@Icons.Material.Filled.Info" Severity="@Severity.Info">
+        Loading countries data...
+    </MudAlert>
+}
+
 <MudGrid Spacing="6" Justify="@Justify.Center">
     @foreach (var country in _countries)
     {
         <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudCard id="@country.Code.ToLowerInvariant()" Elevation="2" Class="country-card" @onclick="@(async () => { await NavigateToCountryAsync(country.Code); })">
+            <MudCard id="@country.Code.ToLowerInvariant()" Elevation="2" Class="country-card"
+                Style="scroll-margin-top: 5rem;" @onclick="@(async () => { await NavigateToCountryAsync(country.Code); })">
                 <MudCardMedia Image="@country.Flag.Svg" Height="200"
                     Style="@($"border-bottom: {Colors.Gray.Lighten1} solid thin;")" />
                 <MudCardContent>

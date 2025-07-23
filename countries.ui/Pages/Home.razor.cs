@@ -28,8 +28,8 @@ public partial class Home {
     private IJSObjectReference? _collocatedJsModule;
     private readonly IList<Domain.Country> _countries = new List<Domain.Country>();
     private string _searchArg = string.Empty;
-
     private string _filterRegion = string.Empty;
+    private bool _isLoading = false;
 
     protected override async Task OnParametersSetAsync() {
         await base.OnParametersSetAsync();
@@ -46,16 +46,25 @@ public partial class Home {
     protected override async Task OnAfterRenderAsync(bool firstRender) {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (!string.IsNullOrWhiteSpace(_status?.SelectedCountryCode))
+        if (!string.IsNullOrWhiteSpace(_status?.SelectedCountryCode)) {
             await BringCountryIntoViewAsync(_status.SelectedCountryCode);
+            _status.SelectedCountryCode = null;
+        }
     }
 
     private async Task LoadCountriesAsync(CancellationToken cancellationToken = default) {
         _countries.Clear();
-        await foreach (var country in ApiClient!.GetAllCountriesAsync(cancellationToken)) {
-            if (cancellationToken.IsCancellationRequested) break;
-            if (country is not null) _countries.Add(country);
+        _isLoading = true;
+
+        try {
+            await foreach (var country in ApiClient!.GetAllCountriesAsync(cancellationToken)) {
+                if (cancellationToken.IsCancellationRequested) break;
+                if (country is not null) _countries.Add(country);
+            }
+        } finally {
+            _isLoading = false;
         }
+
     }
 
     private async Task SearchByNameAsync(CancellationToken cancellationToken = default) {
@@ -69,13 +78,18 @@ public partial class Home {
             return;
         }
 
-        await foreach (var country in ApiClient!.SearchByNameAsync(_searchArg, cancellationToken)) {
-            if (cancellationToken.IsCancellationRequested) break;
+        _isLoading = true;
+        try {
+            await foreach (var country in ApiClient!.SearchByNameAsync(_searchArg, cancellationToken)) {
+                if (cancellationToken.IsCancellationRequested) break;
 
-            if (country is null) continue;
+                if (country is null) continue;
 
-            if (string.IsNullOrWhiteSpace(_filterRegion) || country.Region.Equals(_filterRegion) == true)
-                _countries.Add(country);
+                if (string.IsNullOrWhiteSpace(_filterRegion) || country.Region.Equals(_filterRegion) == true)
+                    _countries.Add(country);
+            }
+        } finally {
+            _isLoading = false;
         }
     }
 
@@ -91,12 +105,17 @@ public partial class Home {
             return;
         }
 
-        await foreach (var country in ApiClient!.FilterByRegionAsync(_filterRegion, cancellationToken)) {
-            if (cancellationToken.IsCancellationRequested) break;
-            if (country is null) continue;
+        _isLoading = true;
+        try {
+            await foreach (var country in ApiClient!.FilterByRegionAsync(_filterRegion, cancellationToken)) {
+                if (cancellationToken.IsCancellationRequested) break;
+                if (country is null) continue;
 
-            if (string.IsNullOrWhiteSpace(_searchArg) || country.Name.Matches(_searchArg))
-                _countries.Add(country);
+                if (string.IsNullOrWhiteSpace(_searchArg) || country.Name.Matches(_searchArg))
+                    _countries.Add(country);
+            }
+        } finally {
+            _isLoading = false;
         }
     }
 
