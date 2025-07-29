@@ -18,6 +18,8 @@ public class Country {
     public string Region { get; set; } = string.Empty;
     public string[] Capital { get; set; } = Array.Empty<string>();
     public string SubRegion { get; set; } = string.Empty;
+    public double Area { get; set; }
+    public double PopulationDensity => Area != 0 ? Population / Area : 0;
 
     [JsonPropertyName("tld")]
     public string[] TopLevelDomain { get; set; } = Array.Empty<string>();

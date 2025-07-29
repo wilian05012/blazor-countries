@@ -11,7 +11,7 @@
     <MudSelect T="string" Variant="@Variant.Filled" Clearable="true" Label="Filter by region" Immediate="false"
         Value="@_filterRegion" FullWidth="false" FitContent="false"
         ValueChanged="@(async (selectedRegion) => { _filterRegion = selectedRegion; await FilterByRegionAsync(); })">
-        @foreach (var region in Domain.World.Regions)
+        @foreach (var region in Domain.World.RegionNames)
         {
             <MudSelectItem Value="@region">@region</MudSelectItem>
         }
