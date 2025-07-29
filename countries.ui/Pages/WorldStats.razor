@@ -1,7 +1,49 @@
 ﻿@page "/world"
 
 <MudText Typo="Typo.h3">WorldStats</MudText>
-<MudText>@(_isLoading ? "Loading..." : "Loading complete")</MudText>
-@code {
 
+@if (_isLoading)
+{
+    <MudAlert ShowCloseIcon="false" Elevation="4" Severity="Severity.Info">
+        Loading data...
+    </MudAlert>
 }
+else
+{
+    <MudGrid>
+        <MudItem xs="12">
+            <MudPaper>
+                @{
+                    var regionsAreas = _world!.Regions.Select(region => new
+                    {
+                        Label = region.Name,
+                        Area = region.SubRegions.Select(sr => sr.Countries.Sum(c => c.Area)).Sum()
+                    });
+                }
+                <MudChart ChartType="ChartType.Donut" Width="300" Height="300"
+                    InputData="@regionsAreas.Select(entry => entry.Area).ToArray()"
+                    InputLabels="@regionsAreas.Select(entry => entry.Label).ToArray()" LegendPosition="Position.Bottom" />
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Region</th>
+                            <th>Area</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var entry in regionsAreas)
+                        {
+                            <tr>
+                                <td>@entry.Label</td>
+                                <td>@entry.Area</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+using MudBlazor.Charts;
+#line default
