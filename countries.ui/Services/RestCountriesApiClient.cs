@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Net.Http.Json;
 
 using countries.ui.Domain;
@@ -43,17 +44,19 @@ public class RestCountriesApiClient {
     /// Get the countries organized in a hierarchy of Region and SubRegion 
     /// </summary>
     /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <returns>A world object with regions recursively populated</returns>
     public async Task<World> GetWorldCountriesAsync(CancellationToken cancellationToken = default) {
         var world = new World();
         foreach (World.Region region in world.Regions) {
-            var countries = await _httpClient.GetFromJsonAsync<Country[]>($"{ENDPOINT_REGION_FILTER}{region.Name}", cancellationToken);
             if (cancellationToken.IsCancellationRequested) break;
+            IEnumerable<Domain.Country>? countries = await _httpClient.GetFromJsonAsync<Country[]>($"{ENDPOINT_REGION_FILTER}{region.Name}", cancellationToken);
 
-            region.SubRegions = countries?.GroupBy(country => country.SubRegion)?.Select(grp => new World.SubRegion() {
-                Name = grp.Key,
-                Countries = grp
-            }) ?? Array.Empty<World.SubRegion>();
+            if (countries is not null) {
+                region.SubRegions = countries.GroupBy(country => country.SubRegion)
+                    .Select(grp => new World.SubRegion() {
+                        Name = grp.Key,
+                        Countries = grp }).ToArray();
+            }
         }
 
         return world;

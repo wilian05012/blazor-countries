@@ -23,24 +23,6 @@ else
                 <MudChart ChartType="ChartType.Donut" Width="300" Height="300"
                     InputData="@regionsAreas.Select(entry => entry.Area).ToArray()"
                     InputLabels="@regionsAreas.Select(entry => entry.Label).ToArray()" LegendPosition="Position.Bottom" />
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Region</th>
-                            <th>Area</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var entry in regionsAreas)
-                        {
-                            <tr>
-                                <td>@entry.Label</td>
-                                <td>@entry.Area</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
             </MudPaper>
         </MudItem>
     </MudGrid>

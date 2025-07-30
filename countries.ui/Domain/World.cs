@@ -20,5 +20,7 @@ public class World {
         "Antarctic"
     };
 
-    public IEnumerable<Region> Regions { get; set; } = RegionNames.Select(regionName => new Region() { Name = regionName });
+    public IEnumerable<Region> Regions { get; set; } = RegionNames
+        .Select(regionName => new Region() { Name = regionName })
+        .ToArray();
 }
